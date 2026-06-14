@@ -23,6 +23,8 @@ vendor/bundle/
 # Python
 *.pyc
 __pycache__/
+/.venv
+/venv
 /.zed
 IMPROVEMENTS.md
 /docs/evals/
