@@ -1,4 +1,18 @@
-# ButterCut
+# EditorVideosDicadaju
+
+> **Kit de edição de vídeo da Dicadaju.** Este repositório combina três ferramentas open-source de vídeo para agentes de IA. O **ButterCut** é a base (na raiz); as outras duas estão integradas conforme abaixo.
+>
+> | Ferramenta | Onde | O que faz |
+> |---|---|---|
+> | **ButterCut** | raiz (`lib/`, `skills/`, `spec/`…) | Edição de footage real: transcrição (WhisperX), análise, planejamento e geração de timelines/XML para Final Cut, Premiere e DaVinci Resolve. |
+> | **HeyGen skills** | `skills/heygen-avatar`, `skills/heygen-video`, `skills/heygen-translate` | Criação de vídeos com avatar de IA (face + voz), geração de vídeos de apresentador e tradução/dublagem com lip-sync. Usa o MCP oficial da HeyGen (ver `.mcp.json`). |
+> | **HyperFrames** | `hyperframes/` | Framework "escreva HTML, renderize vídeo" (monorepo Bun/TypeScript). Instale com `cd hyperframes && bun install`. |
+>
+> **Instalação rápida:** ButterCut → `bundle install` + ffmpeg (use a skill `/setup` no macOS); HyperFrames → `cd hyperframes && bun install`. As skills da HeyGen funcionam direto via MCP.
+
+---
+
+## ButterCut
 
 This is the source code for the core ButterCut XML generator and video editing agent. If you love or hate Docker, have opinions on types, and have a favorite text editor, this is the spot for you. Otherwise, we recommend following the installation instructions on [ButterCut.io](https://buttercut.io).
 
