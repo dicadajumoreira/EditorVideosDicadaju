@@ -1,0 +1,30 @@
+/tmp
+.DS_Store
+/.buttercut_developer
+/last_buttercut_update_check
+/libraries
+/media
+/backups
+/spec/assets
+
+# Optional static binaries (ffmpeg/ffprobe) — resolved first by MediaTools
+/dependencies
+
+# Ruby
+*.gem
+.bundle/
+vendor/bundle/
+
+# IDE
+.vscode/
+.idea/
+.ruby-lsp/
+
+# Python
+*.pyc
+__pycache__/
+/.zed
+IMPROVEMENTS.md
+/docs/evals/
+/docs/social
+/docs/upgrades
