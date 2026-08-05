@@ -1,0 +1,167 @@
+/* ============================================================================
+   HubStation — folha de estilo do site
+   Base convertida do protótipo de design + camada de produção (responsivo,
+   menu mobile, acessibilidade). Editar aqui, não em tools/_gerado.css.
+   ========================================================================= */
+
+/* --------------------------------------------------- base do protótipo --- */
+
+html{scroll-behavior:smooth}
+body{margin:0;background-color:#080808;background-image:radial-gradient(1100px 700px at 75% -8%,rgba(249,220,167,0.05),transparent 62%),radial-gradient(900px 700px at -10% 30%,rgba(240,238,234,0.03),transparent 55%);background-attachment:fixed;color:#F0EEEA;font-family:Archivo,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+body::after{content:'';position:fixed;inset:0;z-index:60;pointer-events:none;opacity:0.055;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+a{color:#B8A06A;text-decoration:none}
+a:hover{color:#F9DCA7}
+button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit}
+input,textarea,select{font-family:inherit}
+::selection{background:#F44336;color:#FFFFFF}
+button,a{transition:color 0.25s ease,background 0.3s ease,border-color 0.25s ease,transform 0.25s ease}
+
+@keyframes hsDrawV{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes hsDrawH{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes hsPop{0%{transform:rotate(45deg) scale(0)}70%{transform:rotate(45deg) scale(1.3)}100%{transform:rotate(45deg) scale(1)}}
+@keyframes hsDrop{0%{transform:translateY(-46px);opacity:0}60%{transform:translateY(7px);opacity:1}100%{transform:translateY(0);opacity:1}}
+@keyframes hsFade{from{opacity:0}to{opacity:1}}
+@keyframes hsPulse{0%{transform:scale(0.5);opacity:0.8}100%{transform:scale(1.9);opacity:0}}
+@keyframes hsScrollDot{0%{transform:translateY(0);opacity:0}20%{opacity:1}80%{opacity:1}100%{transform:translateY(28px);opacity:0}}
+@keyframes hsWordIn{from{transform:translateY(105%)}to{transform:translateY(0)}}
+@keyframes hsWordDim{from{opacity:0}to{opacity:1}}
+
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:#0B0B0B}
+::-webkit-scrollbar-thumb{background:#2A2A2A;border-radius:5px}
+::-webkit-scrollbar-thumb:hover{background:#B8A06A}
+
+[data-eyebrow]{display:flex;align-items:center;gap:12px}
+[data-eyebrow]::before{content:'';width:26px;height:1px;background:rgba(184,160,106,0.55);flex:none}
+[data-eyebrow]::after{content:'';width:5px;height:5px;background:rgba(184,160,106,0.8);transform:rotate(45deg);flex:none}
+
+[data-card]{box-shadow:0 12px 34px rgba(0,0,0,0.35);transition:background 0.35s ease,transform 0.4s cubic-bezier(0.22,0.61,0.36,1),border-color 0.35s ease,box-shadow 0.4s ease}
+[data-card]:hover{transform:translateY(-6px);background:#101010;border-color:rgba(249,220,167,0.4)!important;z-index:2;box-shadow:0 26px 56px rgba(0,0,0,0.55),0 0 0 1px rgba(249,220,167,0.1)}
+[data-card] [data-line]{transform:scaleX(0);transform-origin:left;transition:transform 0.5s cubic-bezier(0.22,0.61,0.36,1)}
+[data-card]:hover [data-line]{transform:scaleX(1)}
+[data-card] [data-arrow]{opacity:0;transform:translateX(-12px);transition:opacity 0.3s ease,transform 0.4s cubic-bezier(0.22,0.61,0.36,1)}
+[data-card]:hover [data-arrow]{opacity:1;transform:translateX(0)}
+
+/* estados hover/focus convertidos dos atributos style-hover / style-focus */
+.hs-h1:hover{color:#F9DCA7 !important;border-bottom:1px solid #F9DCA7 !important}
+.hs-h2:hover{background:#F9DCA7 !important;transform:translateY(-2px) !important}
+.hs-h3:hover{border-color:#F9DCA7 !important;color:#F9DCA7 !important}
+.hs-h4:hover{color:#F9DCA7 !important}
+.hs-h5:hover{transform:translateY(-3px) !important;background:#1EBE5A !important}
+.hs-h6:hover{background:#9A1E17 !important;transform:translateY(-2px) !important}
+.hs-h7:hover{border:1px solid #F9DCA7 !important;color:#F9DCA7 !important}
+.hs-h8:hover{color:#FFFFFF !important;border-bottom:1px solid #FFFFFF !important}
+.hs-h9:hover{color:#222222 !important;border-bottom:1px solid #222222 !important}
+.hs-f10:focus{border:1px solid #F9DCA7 !important}
+.hs-h11:hover{border-color:#F44336 !important;color:#F44336 !important}
+
+/* ------------------------------------------------- camada de produção --- */
+
+/* o atributo hidden precisa vencer os display: dos estilos inline herdados
+   do protótipo — sem isso o aviso de erro do formulário aparece sempre */
+[hidden]{display:none !important}
+
+/* links que no protótipo eram <button> de navegação */
+.hs-btn{color:inherit;text-decoration:none;cursor:pointer}
+.hs-btn:hover{color:inherit}
+
+/* foco visível de teclado — o protótipo removia o outline dos campos */
+:focus-visible{outline:2px solid #F9DCA7;outline-offset:3px}
+.hs-pular{position:absolute;left:-9999px;top:0;z-index:100;background:#F9DCA7;color:#080808;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12px;letter-spacing:0.2em;padding:14px 22px}
+.hs-pular:focus{left:0;color:#080808}
+
+/* espaço reservado das imagens do portfólio que ainda não subiram */
+.hs-slot{width:100%;height:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;box-sizing:border-box;background:#0E0E0E;border:1px dashed rgba(240,238,234,0.22);color:#585858;font-size:13px;line-height:1.5}
+
+/* menu mobile — o protótipo só previa desktop */
+#hs-menu-btn{display:none;flex-direction:column;gap:5px;padding:10px;margin:-10px}
+#hs-menu-btn span{display:block;width:22px;height:1.5px;background:#F0EEEA;transition:transform 0.3s ease,opacity 0.2s ease}
+#hs-menu-btn[aria-expanded="true"] span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+#hs-menu-btn[aria-expanded="true"] span:nth-child(2){opacity:0}
+#hs-menu-btn[aria-expanded="true"] span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+
+@media (max-width:1180px){
+  header nav{gap:22px !important}
+  header nav a{font-size:11px !important;letter-spacing:0.16em !important}
+}
+
+@media (max-width:940px){
+  #hs-menu-btn{display:flex}
+  /* o <nav> carrega display:flex inline, vindo do protótipo — sem !important
+     a regra de esconder não vence */
+  header nav{
+    position:absolute;left:0;right:0;top:100%;
+    display:none !important;flex-direction:column;align-items:stretch !important;gap:0 !important;
+    background:#0B0B0B;border-bottom:1px solid rgba(240,238,234,0.14);
+    padding:8px 0 20px;max-height:calc(100vh - 74px);overflow-y:auto
+  }
+  header nav.aberto{display:flex !important}
+  header nav a{
+    font-size:12px !important;letter-spacing:0.2em !important;
+    padding:18px 28px !important;border-bottom:1px solid rgba(240,238,234,0.08) !important;
+    text-align:left
+  }
+  header nav a:last-child{margin:16px 28px 0;text-align:center;border-bottom:0 !important}
+}
+
+/* respiro lateral e altura de seção em telas pequenas */
+@media (max-width:720px){
+  /* só os containers de conteúdo (max-width:1280px) mudam de padding. Nunca
+     as divs decorativas em absoluto — marcas de canto, grades, indicador de
+     rolagem — que também são filhas diretas de <section>. */
+  main section > div[style*="max-width:1280px"],
+  footer > div[style*="max-width:1280px"]{padding-left:22px !important;padding-right:22px !important}
+  main section > div[style*="max-width:1280px"]{padding-top:64px !important;padding-bottom:64px !important}
+  h1{letter-spacing:0.01em !important}
+
+  /* colunas divididas por hairline vertical viram blocos empilhados */
+  main div[style*="border-left:1px solid rgba(240,238,234,0.14)"]{
+    border-left:0 !important;border-top:1px solid rgba(240,238,234,0.14);
+    padding-left:0 !important;padding-top:26px !important
+  }
+
+  /* o protótipo foi desenhado em 1280px: várias fileiras usam flex sem quebra
+     e itens com flex:none. Em tela estreita elas precisam quebrar de linha. */
+  main div[style*="display:flex"],
+  footer div[style*="display:flex"]{flex-wrap:wrap}
+  main div[style*="display:flex"] > *,
+  footer div[style*="display:flex"] > *{min-width:0}
+
+  /* réguas tracejadas decorativas somem: só ocupam largura */
+  footer div[style*="repeating-linear-gradient"]{display:none}
+
+  /* a marca animada do hero e os diagramas encolhem junto com a tela */
+  svg{max-width:100%;height:auto}
+}
+
+/* tabelas/listas em grade do painel viram blocos no celular */
+@media (max-width:820px){
+  .hs-linha-contato{grid-template-columns:1fr !important;gap:14px !important}
+}
+
+/* imagens nunca estouram o container */
+img{max-width:100%}
+
+/* Guarda final: mesmo com as causas acima corrigidas, elementos decorativos
+   posicionados em absoluto (anéis, grades, skyline) podem passar da borda.
+   Nada de barra horizontal — a rolagem vertical continua normal. */
+html,body{overflow-x:clip}
+@supports not (overflow-x:clip){
+  html,body{overflow-x:hidden}
+}
+
+/* quem pediu menos movimento, recebe menos movimento */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{
+    animation-duration:0.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:0.001ms !important
+  }
+  main section{opacity:1 !important;transform:none !important}
+}
+
+@media print{
+  header,footer,#hs-whatsapp,#hs-progress{display:none !important}
+  body{background:#FFFFFF;color:#111111}
+  body::after{display:none}
+}

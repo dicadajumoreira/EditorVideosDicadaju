@@ -1,0 +1,10 @@
+Prints do portfolio. Nomes exatos esperados pelo portfolio.html:
+
+  dicadajumoreira.jpg    4:5   feed do Instagram @dicadajumoreira
+  sindicompanybr.jpg     4:5   feed do Instagram @sindicompanybr
+  bysindicompany.jpg     4:5   feed do Instagram @bysindicompany
+  lavandery.jpg          4:5   feed do Instagram @lavandery.co
+  youtube-dicadaju.jpg   16:9  canal do YouTube @dicadajumoreira
+
+Enquanto o arquivo nao existir, o site mostra uma moldura tracejada
+dizendo o que falta. Nada quebra.
