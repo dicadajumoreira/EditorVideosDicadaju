@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hubstation.com.br/sitemap.xml
+
+# Bloquear diretórios técnicos
+Disallow: /netlify/
+Disallow: /.netlify/
+Disallow: /js/
+Disallow: /css/

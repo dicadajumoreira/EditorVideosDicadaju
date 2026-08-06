@@ -1,0 +1,8 @@
+{
+  "name": "hubstation-website",
+  "version": "1.0.0",
+  "description": "HubStation — Agência de Marketing para o Mercado Condominial",
+  "scripts": {
+    "build": "bash build.sh"
+  }
+}
