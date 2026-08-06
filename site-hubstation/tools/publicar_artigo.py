@@ -50,6 +50,13 @@ BASE = "https://hubstation.com.br"
 
 # ------------------------------------------------------------- utilidades --
 
+def url_absoluta(caminho):
+    """A capa pode ser um arquivo do site (/assets/...) ou uma URL externa."""
+    if caminho.startswith("http://") or caminho.startswith("https://"):
+        return caminho
+    return BASE + caminho
+
+
 def slugificar(texto):
     s = unicodedata.normalize("NFKD", texto).encode("ascii", "ignore").decode()
     s = re.sub(r"[^\w\s-]", "", s).strip().lower()
@@ -173,7 +180,7 @@ def montar_pagina(meta, corpo_html, molde_cabeca, molde_rodape):
                     '<meta property="og:url" content="%s">' % url, cabeca)
     if meta["capa"]:
         cabeca = re.sub(r'<meta property="og:image" content="[^"]*">',
-                        '<meta property="og:image" content="%s%s">' % (BASE, meta["capa"]), cabeca)
+                        '<meta property="og:image" content="%s">' % url_absoluta(meta["capa"]), cabeca)
     # a pagina do artigo mora em /blog/, entao os links da navegacao sobem um nivel
     cabeca = re.sub(r'href="(?!/|https?:|mailto:|#)([\w.-]+\.html)"', r'href="../\1"', cabeca)
 
@@ -188,7 +195,7 @@ def montar_pagina(meta, corpo_html, molde_cabeca, molde_rodape):
         "mainEntityOfPage": url,
     }
     if meta["capa"]:
-        dados["image"] = BASE + meta["capa"]
+        dados["image"] = url_absoluta(meta["capa"])
     cabeca = cabeca.replace(
         "</head>",
         '<script type="application/ld+json">%s</script>\n</head>'
@@ -278,7 +285,7 @@ def reindexar():
             "resumo": d.get("description", ""),
             "data": d.get("datePublished", ""),
             "tema": "",
-            "capa": (d.get("image") or "").replace(BASE, ""),
+            "capa": (d.get("image") or "").replace(BASE + "/", "/"),
             "url": "/blog/" + nome,
         })
         tema = re.search(r'letter-spacing:0\.34em;color:#B8A06A;margin-bottom:26px">([^<]+)</div>', s)

@@ -1,1 +1,74 @@
-[]
+[
+  {
+    "titulo": "Por que o mercado condominial precisa de branding estratégico agora",
+    "resumo": "A comunicação do setor ainda está bem abaixo do que poderia ser. Entenda onde está o espaço e como o branding pode preencher.",
+    "data": "2026-04-22",
+    "tema": "Branding",
+    "capa": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1600&q=80&auto=format&fit=crop",
+    "url": "/blog/por-que-o-mercado-condominial-precisa-de-branding-estrategico-agora.html"
+  },
+  {
+    "titulo": "Como síndicos profissionais podem construir autoridade de marca",
+    "resumo": "Autoridade não se improvisa. Se constrói com consistência, posicionamento claro e presença que comunica o que você realmente sabe fazer.",
+    "data": "2026-04-08",
+    "tema": "Posicionamento",
+    "capa": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=1600&q=80&auto=format&fit=crop",
+    "url": "/blog/como-sindicos-profissionais-podem-construir-autoridade-de-marca.html"
+  },
+  {
+    "titulo": "Social media para administradoras: o que realmente funciona",
+    "resumo": "Postar sem critério não é estratégia. Entenda como usar as redes sociais com mais intenção.",
+    "data": "2026-03-25",
+    "tema": "Digital",
+    "capa": "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=1600&q=80&auto=format&fit=crop",
+    "url": "/blog/social-media-para-administradoras-o-que-realmente-funciona.html"
+  },
+  {
+    "titulo": "Os 5 erros de comunicação mais comuns no mercado condominial",
+    "resumo": "Cinco erros recorrentes de comunicação em empresas do setor condominial e como corrigi-los.",
+    "data": "2026-03-11",
+    "tema": "Estratégia",
+    "capa": "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1600&q=80&auto=format&fit=crop",
+    "url": "/blog/os-5-erros-de-comunicacao-mais-comuns-no-mercado-condominial.html"
+  },
+  {
+    "titulo": "Identidade visual para empresas condominiais: o guia completo",
+    "resumo": "Um guia prático sobre identidade visual para empresas do mercado condominial.",
+    "data": "2026-03-04",
+    "tema": "Identidade",
+    "capa": "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=1600&q=80&auto=format&fit=crop",
+    "url": "/blog/identidade-visual-para-empresas-condominiais-o-guia-completo.html"
+  },
+  {
+    "titulo": "Tráfego pago para o mercado condominial: como atrair os clientes certos",
+    "resumo": "Como usar tráfego pago para atrair clientes certos no mercado condominial, sem desperdiçar verba.",
+    "data": "2026-02-19",
+    "tema": "Crescimento",
+    "capa": "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1600&q=80&auto=format&fit=crop",
+    "url": "/blog/trafego-pago-para-o-mercado-condominial-como-atrair-os-clientes-certos.html"
+  },
+  {
+    "titulo": "Tom de voz de marca e por que o setor condominial precisa do seu",
+    "resumo": "Tom de voz é o que faz duas empresas do mesmo setor soarem completamente diferentes.",
+    "data": "2026-02-11",
+    "tema": "Branding",
+    "capa": "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=80&auto=format&fit=crop",
+    "url": "/blog/tom-de-voz-de-marca-e-por-que-o-setor-condominial-precisa-do-seu.html"
+  },
+  {
+    "titulo": "Proposta de valor no mercado condominial: como definir e comunicar a sua",
+    "resumo": "Proposta de valor é o que você responde quando alguém pergunta por que contratar você e não o concorrente.",
+    "data": "2026-02-04",
+    "tema": "Posicionamento",
+    "capa": "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1600&q=80&auto=format&fit=crop",
+    "url": "/blog/proposta-de-valor-no-mercado-condominial-como-definir-e-comunicar-a-sua.html"
+  },
+  {
+    "titulo": "Site para empresa condominial: sua principal ferramenta de autoridade",
+    "resumo": "Um site bem feito trabalha enquanto você não está. Veja por que isso importa no mercado condominial.",
+    "data": "2026-01-21",
+    "tema": "Digital",
+    "capa": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1600&q=80&auto=format&fit=crop",
+    "url": "/blog/site-para-empresa-condominial-sua-principal-ferramenta-de-autoridade.html"
+  }
+]
