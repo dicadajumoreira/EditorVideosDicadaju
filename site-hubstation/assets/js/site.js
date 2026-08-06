@@ -163,6 +163,171 @@
     });
   }
 
+  /* ------------------------------- cadastro antes do WhatsApp ----------- */
+
+  // Ninguem vai para a conversa sem deixar o contato antes. O cadastro cai
+  // na MESMA base do formulario da pagina Contato, marcado como canal
+  // "whatsapp" — no painel da para separar quem veio de onde.
+  //
+  // Se o JavaScript nao carregar, o link continua levando ao WhatsApp
+  // direto: e melhor um botao que funciona sem trava do que um botao morto.
+
+  var SEGMENTOS = [
+    'Síndico profissional', 'Administradora', 'Prestador de serviço',
+    'Tecnologia para o setor', 'Manutenção e obras', 'Auditoria e consultoria',
+    'Fornecedor estratégico', 'Outro'
+  ];
+
+  function campoWa(id, rotulo, marcador, tipo) {
+    return '' +
+      '<div>' +
+        '<label for="' + id + '" style="display:block;font-family:\'Space Grotesk\',sans-serif;font-weight:700;font-size:11px;letter-spacing:0.24em;color:#F9DCA7;margin-bottom:9px">' + rotulo + '</label>' +
+        '<input class="hs-f10" id="' + id + '" name="' + id.replace('wa-', '') + '" type="' + (tipo || 'text') + '" placeholder="' + marcador + '" ' +
+          'style="width:100%;box-sizing:border-box;background:#0E0E0E;border:1px solid rgba(240,238,234,0.2);color:#F0EEEA;font-size:16px;padding:14px 16px;outline:none">' +
+      '</div>';
+  }
+
+  function montarModal() {
+    var m = document.createElement('div');
+    m.id = 'hs-wa-modal';
+    m.hidden = true;
+    m.setAttribute('role', 'dialog');
+    m.setAttribute('aria-modal', 'true');
+    m.setAttribute('aria-labelledby', 'hs-wa-titulo');
+    m.innerHTML = '' +
+      '<div id="hs-wa-fundo"></div>' +
+      '<div id="hs-wa-caixa">' +
+        '<button type="button" id="hs-wa-fechar" aria-label="Fechar">&times;</button>' +
+        '<div data-eyebrow="1" style="font-family:\'Space Grotesk\',sans-serif;font-weight:700;font-size:11px;letter-spacing:0.3em;color:#B8A06A;margin-bottom:18px">ANTES DA CONVERSA</div>' +
+        '<h2 id="hs-wa-titulo" style="font-family:\'Space Grotesk\',sans-serif;font-weight:700;font-size:clamp(22px,3vw,30px);line-height:1.1;letter-spacing:0.02em;margin:0 0 12px">DEIXE SEU CONTATO</h2>' +
+        '<p style="font-size:15px;line-height:1.6;color:#9D9D9D;margin:0 0 26px">Assim já chegamos na conversa sabendo quem é você e o que precisa resolver.</p>' +
+        '<form id="hs-wa-form" style="display:flex;flex-direction:column;gap:18px">' +
+          campoWa('wa-nome', 'NOME', 'Como podemos te chamar') +
+          campoWa('wa-empresa', 'EMPRESA', 'Nome da marca') +
+          '<div>' +
+            '<label for="wa-segmento" style="display:block;font-family:\'Space Grotesk\',sans-serif;font-weight:700;font-size:11px;letter-spacing:0.24em;color:#F9DCA7;margin-bottom:9px">SEGMENTO</label>' +
+            '<select class="hs-f10" id="wa-segmento" name="segmento" style="width:100%;box-sizing:border-box;background:#0E0E0E;border:1px solid rgba(240,238,234,0.2);color:#F0EEEA;font-size:16px;padding:14px 16px;outline:none">' +
+              SEGMENTOS.map(function (s) { return '<option>' + s + '</option>'; }).join('') +
+            '</select>' +
+          '</div>' +
+          '<div>' +
+            '<label for="wa-objetivo" style="display:block;font-family:\'Space Grotesk\',sans-serif;font-weight:700;font-size:11px;letter-spacing:0.24em;color:#F9DCA7;margin-bottom:9px">O QUE VOCÊ PRECISA RESOLVER</label>' +
+            '<textarea class="hs-f10" id="wa-objetivo" name="objetivo" rows="3" placeholder="Em uma ou duas linhas" style="width:100%;box-sizing:border-box;background:#0E0E0E;border:1px solid rgba(240,238,234,0.2);color:#F0EEEA;font-size:16px;padding:14px 16px;outline:none;resize:vertical"></textarea>' +
+          '</div>' +
+          campoWa('wa-contato', 'SEU WHATSAPP OU E-MAIL', 'Onde respondemos') +
+          '<p style="position:absolute;left:-9999px" aria-hidden="true"><label>Não preencha<input type="text" name="bot-field" tabindex="-1" autocomplete="off"></label></p>' +
+          '<div id="hs-wa-erro" hidden style="font-size:14px;line-height:1.5;color:#F44336">Não deu para enviar agora. Tente de novo em instantes.</div>' +
+          '<button type="submit" id="hs-wa-enviar" class="hs-h5" style="display:flex;align-items:center;justify-content:center;gap:14px;background:#25D366;color:#08210F;font-family:\'Space Grotesk\',sans-serif;font-weight:700;font-size:13px;letter-spacing:0.2em;padding:18px 30px;width:100%">ABRIR O WHATSAPP</button>' +
+          '<p style="font-size:12.5px;line-height:1.6;color:#585858;margin:0">Seus dados ficam só com a HubStation. Não compartilhamos nem usamos para disparo em massa sem o seu aceite.</p>' +
+        '</form>' +
+      '</div>';
+    document.body.appendChild(m);
+    return m;
+  }
+
+  function travaWhatsapp() {
+    var modal = null, form = null, erro = null, botao = null, rotulo = '';
+    var destino = '';
+    var focoAnterior = null;
+
+    function abrir(href) {
+      destino = href;
+      if (!modal) {
+        modal = montarModal();
+        form = modal.querySelector('#hs-wa-form');
+        erro = modal.querySelector('#hs-wa-erro');
+        botao = modal.querySelector('#hs-wa-enviar');
+        rotulo = botao.textContent;
+        modal.querySelector('#hs-wa-fechar').addEventListener('click', fechar);
+        modal.querySelector('#hs-wa-fundo').addEventListener('click', fechar);
+        form.addEventListener('submit', enviar);
+      }
+      focoAnterior = document.activeElement;
+      modal.hidden = false;
+      document.body.style.overflow = 'hidden';
+      var primeiro = modal.querySelector('#wa-nome');
+      if (primeiro) primeiro.focus();
+    }
+
+    function fechar() {
+      if (!modal) return;
+      modal.hidden = true;
+      document.body.style.overflow = '';
+      if (focoAnterior && focoAnterior.focus) focoAnterior.focus();
+    }
+
+    function irParaWhatsapp(url) {
+      var alvo = url || destino;
+      // window.open pode ser barrado por bloqueador de pop-up quando sai de
+      // uma resposta de rede; se barrar, navega na propria aba.
+      var aba = window.open(alvo, '_blank', 'noopener');
+      if (!aba) window.location.href = alvo;
+    }
+
+    function enviar(ev) {
+      ev.preventDefault();
+      var nome = form.querySelector('#wa-nome');
+      var contato = form.querySelector('#wa-contato');
+      if (!nome.value.trim() || !contato.value.trim()) {
+        erro.textContent = 'Precisamos pelo menos do seu nome e de onde responder.';
+        erro.hidden = false;
+        (nome.value.trim() ? contato : nome).focus();
+        return;
+      }
+      erro.hidden = true;
+      botao.disabled = true;
+      botao.style.opacity = '0.6';
+      botao.textContent = 'UM SEGUNDO...';
+
+      var dados = new FormData(form);
+      fetch('/form-contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          canal: 'whatsapp',
+          nome: dados.get('nome') || '',
+          empresa: dados.get('empresa') || '',
+          segmento: dados.get('segmento') || '',
+          objetivo: dados.get('objetivo') || '',
+          contato: dados.get('contato') || '',
+          'bot-field': dados.get('bot-field') || ''
+        })
+      })
+        .then(function (r) {
+          if (!r.ok) throw new Error('falhou');
+          return r.json().catch(function () { return {}; });
+        })
+        .then(function (r) {
+          fechar();
+          form.reset();
+          irParaWhatsapp(r && r.whatsappUrl);
+        })
+        .catch(function () {
+          // O cadastro falhou, mas segurar o cliente longe do WhatsApp por
+          // causa disso seria pior: abrimos a conversa mesmo assim.
+          erro.textContent = 'Não conseguimos salvar seu cadastro, mas vamos te levar para a conversa.';
+          erro.hidden = false;
+          setTimeout(function () { fechar(); irParaWhatsapp(); }, 1600);
+        })
+        .then(function () {
+          botao.disabled = false;
+          botao.style.opacity = '';
+          botao.textContent = rotulo;
+        });
+    }
+
+    document.addEventListener('click', function (ev) {
+      var link = ev.target.closest('a[href*="wa.me"]');
+      if (!link) return;
+      ev.preventDefault();
+      abrir(link.getAttribute('href'));
+    });
+
+    document.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Escape' && modal && !modal.hidden) fechar();
+    });
+  }
+
   /* ------------------------------------------ formulario de contato ----- */
 
   function formularioContato() {
@@ -192,6 +357,7 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          canal: 'site',
           nome: dados.get('nome') || '',
           empresa: dados.get('empresa') || '',
           segmento: dados.get('segmento') || '',
@@ -349,6 +515,7 @@
     progressoELeitura();
     rotador();
     imagensPendentes();
+    travaWhatsapp();
     formularioContato();
     painelContatos();
   }

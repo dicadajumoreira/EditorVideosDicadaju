@@ -28,6 +28,11 @@
   status = 200
 
 [[redirects]]
+  from = "/blog"
+  to = "/blog.html"
+  status = 200
+
+[[redirects]]
   from = "/agencia"
   to = "/agencia.html"
   status = 200

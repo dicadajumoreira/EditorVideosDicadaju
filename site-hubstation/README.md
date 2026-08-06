@@ -16,37 +16,68 @@ Não existe etapa de compilação.
 | `metodo.html` | Método |
 | `mercado.html` | Mercado |
 | `portfolio.html` | Portfólio |
+| `blog.html` | Blog (lista das matérias) |
+| `blog/*.html` | Uma página por matéria |
 | `agencia.html` | A agência |
 | `contato.html` | Contato (com formulário) |
-| `admin.html` | Painel de contatos, protegido por senha |
+| `admin.html` | Painel interno, protegido por senha |
 | `404.html` | Página de endereço não encontrado |
 
 Tudo o mais:
 
-- `assets/css/site.css` — todo o visual do site
-- `assets/js/site.js` — menu do celular, animações, formulário e painel
-- `assets/logos/` — logos oficiais
-- `assets/img/portfolio/` — **prints do portfólio (ainda faltam, veja abaixo)**
-- `netlify/functions/` — o que recebe o formulário e alimenta o painel
-- `tools/` — o script que converteu o protótipo em site; serve só de registro
+- `assets/css/site.css` — o visual do site
+- `assets/css/admin.css` — o visual do painel
+- `assets/js/site.js` — menu do celular, animações, formulário e a trava do WhatsApp
+- `assets/js/blog.js` — listagem e filtro por tema do blog
+- `assets/js/admin.js` — o painel inteiro
+- `assets/blog/artigos.json` — índice das matérias (gerado, não editar à mão)
+- `conteudo/blog/` — o texto das matérias, em `.md`
+- `netlify/functions/` — o que roda no servidor
+- `tools/` — os scripts que geram páginas
 
 ---
 
-## Ainda falta preencher
+## Como funciona o contato
 
-1. **Número do WhatsApp.** Hoje está o provisório `5511999999999`, no botão
-   verde flutuante e nos rodapés. Trocar em todos os `.html` de uma vez.
-2. **Instagram e LinkedIn.** Os links estão apontando para as páginas iniciais
-   das redes (`https://instagram.com/`), sem o perfil da HubStation.
-3. **Prints do portfólio.** Cinco imagens, que devem entrar em
-   `assets/img/portfolio/` com estes nomes exatos:
-   `dicadajumoreira.jpg`, `sindicompanybr.jpg`, `bysindicompany.jpg`,
-   `lavandery.jpg` (todas em 4:5) e `youtube-dicadaju.jpg` (16:9).
-   Enquanto não subirem, aparece uma moldura tracejada dizendo o que falta —
-   o site não quebra.
-4. **Domínio.** As tags de SEO estão escritas para `https://hubstation.com.br`.
-   Se o endereço for outro, trocar nos `.html`, no `robots.txt` e no
-   `sitemap.xml`.
+Existe **uma única base**. Tudo cai nela, e tudo aparece em `/admin`.
+
+1. **Formulário da página Contato** → gravado com canal `site`.
+2. **Botão do WhatsApp** → antes de abrir a conversa, aparece o mesmo
+   cadastro. Só depois de preencher a pessoa vai para o WhatsApp. Fica
+   gravado com canal `whatsapp`.
+
+Nos dois casos: um aviso chega no seu e-mail e o cliente recebe uma
+confirmação automática (se a chave da Resend estiver configurada).
+
+Quem chega pelo botão do WhatsApp já entra com aceite para receber mensagens
+por WhatsApp. Quem vem pelo formulário do site, não — só entra no disparo de
+WhatsApp se marcar isso.
+
+---
+
+## O painel `/admin`
+
+Entra com senha. A senha é trocada por um passe que vale 12 horas, então ela
+não fica indo e voltando a cada clique.
+
+**Contatos** — todos os cadastros, com busca, filtro por canal, status e
+segmento. Dá para marcar como respondido, tirar alguém da lista, excluir e
+exportar CSV (abre direto no Excel).
+
+**Disparo por e-mail** — você escreve assunto e corpo, escolhe para quem vai
+(por segmento e por origem), manda um teste para si mesma e dispara. Usa
+`{{nome}}`, `{{empresa}}` e `{{segmento}}` para personalizar. O rodapé com o
+link de descadastro entra sozinho em todo disparo — isso é obrigatório e não
+tem como desligar. O envio é em fila, com pausa entre um e outro, para não
+esbarrar no limite da Resend.
+
+**Disparo por WhatsApp** — o WhatsApp só permite que a empresa **inicie**
+conversa com um texto aprovado pela Meta (um "template"). Você cria e aprova
+os textos no Gerenciador do WhatsApp Business; assim que aprovarem, eles
+aparecem na lista do painel. Só recebe quem deixou WhatsApp e aceitou.
+
+**Histórico** — o que já foi disparado, quantos receberam, quantos falharam,
+e se algum disparo parou no meio.
 
 ---
 
@@ -56,44 +87,64 @@ O site inteiro é esta pasta. O `netlify.toml` já traz a configuração:
 publica a pasta raiz, aponta as funções e cria os endereços limpos
 (`/servicos` em vez de `/servicos.html`).
 
-Depois de criar o projeto no Netlify, configurar em
-**Site configuration › Environment variables**:
+Configurar em **Site configuration › Environment variables**:
 
 | Variável | Para quê | Obrigatória |
 |---|---|---|
 | `PAINEL_SENHA` | senha de acesso ao `/admin` | sim |
-| `RESEND_API_KEY` | avisar por e-mail a cada contato novo | não |
-| `CONTATO_DESTINO` | para quem vai o aviso (padrão `contato@hubstation.com.br`) | não |
-| `CONTATO_REMETENTE` | de quem sai o aviso (padrão `site@hubstation.com.br`) | não |
+| `AUTH_SECRET` | assina o passe do painel e os links de descadastro | sim |
+| `RESEND_API_KEY` | avisar por e-mail e fazer os disparos | para e-mail |
+| `CONTATO_DESTINO` | para quem vai o aviso de contato novo | não |
+| `CONTATO_REMETENTE` | de quem sai o e-mail | não |
+| `WHATSAPP_COMERCIAL` | número do WhatsApp comercial, só dígitos | não |
+| `WHATSAPP_ACCESS_TOKEN` | token permanente da Meta | para WhatsApp |
+| `WHATSAPP_PHONE_NUMBER_ID` | id do número na Meta | para WhatsApp |
+| `WHATSAPP_WABA_ID` | id da conta WhatsApp Business | para WhatsApp |
 
 Sem `RESEND_API_KEY` o site continua funcionando: o contato é gravado e
-aparece no painel, só não dispara e-mail.
-
-Sem `PAINEL_SENHA` o painel recusa qualquer senha — ninguém entra.
+aparece no painel, só não dispara e-mail. Sem as variáveis do WhatsApp, a aba
+do WhatsApp diz exatamente o que falta em vez de quebrar.
 
 ---
 
-## Como o formulário funciona
+## Publicar uma matéria no blog
 
-1. A pessoa preenche em `/contato` e envia.
-2. `netlify/functions/form-contact.mjs` recebe, descarta robô (campo isca
-   escondido), guarda no Netlify Blobs e, se houver chave, manda o e-mail.
-3. Em `/admin`, depois da senha, a lista aparece com data, status, dados e
-   o que a pessoa escreveu. Dá para marcar como respondido, excluir e
-   exportar um CSV que abre direto no Excel.
+1. Escreva o texto num arquivo `.md` dentro de `conteudo/blog/`.
+   Use `conteudo/blog/_modelo.md` como referência do formato.
+2. Rode, de dentro de `site-hubstation/`:
+
+   ```
+   python3 tools/publicar_artigo.py conteudo/blog/*.md
+   ```
+
+Isso gera a página de cada matéria em `blog/` e refaz o índice que a página
+`blog.html` lê. Imagens de capa vão em `assets/blog/img/`, em 1600×900.
+
+---
+
+## Ainda falta preencher
+
+1. **As matérias do blog.** A estrutura está pronta e vazia — falta o texto
+   das matérias que já existem hoje no site no ar.
+2. **Número do WhatsApp.** Hoje está o provisório `5511999999999`. Dá para
+   trocar de uma vez pela variável `WHATSAPP_COMERCIAL` no Netlify, e nos
+   `.html` para os links do rodapé.
+3. **Instagram e LinkedIn.** Os links apontam para a página inicial das
+   redes, sem o perfil da HubStation.
+4. **Prints do portfólio.** Cinco imagens em `assets/img/portfolio/` — veja
+   o `LEIA-ME.txt` de lá. Enquanto não subirem, aparece uma moldura tracejada
+   dizendo o que falta; o site não quebra.
+5. **Domínio.** As tags de SEO estão escritas para `https://hubstation.com.br`.
 
 ---
 
 ## Mexer no site
 
-- **Trocar um texto:** abrir o `.html` da página e editar o texto entre as
-  tags. O visual não depende do texto.
-- **Trocar uma cor ou espaçamento:** os estilos estão escritos dentro das
-  próprias tags (`style="..."`), do jeito que vieram do design. O que é geral
-  — fundo, fontes, comportamento no celular — está em `assets/css/site.css`.
-- **Ver o site na máquina antes de publicar:** de dentro desta pasta,
-  `python3 -m http.server 8000` e abrir `http://localhost:8000`. O formulário
-  e o painel só funcionam de verdade no Netlify, porque dependem das funções.
-
-O menu do celular, a barra de progresso de leitura, as animações de entrada
-e o rotador de palavras da home estão todos em `assets/js/site.js`.
+- **Trocar um texto:** abra o `.html` da página e edite o texto entre as tags.
+- **Trocar cor ou espaçamento:** os estilos estão dentro das próprias tags
+  (`style="..."`), do jeito que vieram do design. O que é geral — fundo,
+  fontes, comportamento no celular — está em `assets/css/site.css`.
+- **Ver o site antes de publicar:** de dentro desta pasta,
+  `python3 -m http.server 8000` e abra `http://localhost:8000`. O formulário,
+  o painel e os disparos só funcionam de verdade no Netlify, porque dependem
+  das funções do servidor.

@@ -1,19 +1,22 @@
 /**
  * POST /form-contact
  *
- * Recebe os envios do formulario da pagina Contato, guarda no Netlify Blobs e,
- * se houver RESEND_API_KEY configurada, avisa a equipe por e-mail.
+ * Unica porta de entrada de contato do site. Recebe tanto o formulario da
+ * pagina Contato quanto o cadastro que aparece antes do WhatsApp — os dois
+ * caem na MESMA base, marcados pelo campo "canal".
  *
- * Variaveis de ambiente (Netlify > Site configuration > Environment variables):
- *   RESEND_API_KEY     opcional — sem ela o contato so e gravado, nada de e-mail
- *   CONTATO_REMETENTE  opcional — de onde sai o aviso (padrao: site@hubstation.com.br)
- *   CONTATO_DESTINO    opcional — para quem vai, separado por virgula
- *                                 (padrao: contato@hubstation.com.br)
+ * Resposta traz `whatsappUrl` quando canal === 'whatsapp', para o site
+ * mandar a pessoa para a conversa logo depois de cadastrar.
  */
 
-import { getStore } from '@netlify/blobs';
+import { novoId, gravar } from '../lib/leads.mjs';
+import { paraE164, bonito, pareceTelefone } from '../lib/telefone.mjs';
+import { avisarCadastro } from '../lib/email.mjs';
 
 const LIMITES = { nome: 120, empresa: 160, segmento: 80, objetivo: 4000, contato: 200 };
+
+const WHATSAPP_NUMERO = process.env.WHATSAPP_COMERCIAL || '5511999999999';
+const WHATSAPP_TEXTO = 'Olá, quero falar com a HubStation';
 
 function limpar(valor, max) {
   return String(valor ?? '').replace(/\s+/g, ' ').trim().slice(0, max);
@@ -22,7 +25,7 @@ function limpar(valor, max) {
 function resposta(status, corpo) {
   return new Response(JSON.stringify(corpo), {
     status,
-    headers: { 'Content-Type': 'application/json; charset=utf-8' },
+    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' },
   });
 }
 
@@ -31,43 +34,6 @@ async function lerCorpo(req) {
   if (tipo.includes('application/json')) return await req.json();
   const form = await req.formData();
   return Object.fromEntries(form.entries());
-}
-
-async function avisarPorEmail(contato) {
-  const chave = process.env.RESEND_API_KEY;
-  if (!chave) return;
-
-  const destino = (process.env.CONTATO_DESTINO || 'contato@hubstation.com.br')
-    .split(',')
-    .map((e) => e.trim())
-    .filter(Boolean);
-
-  const linhas = [
-    ['Nome', contato.nome],
-    ['Empresa', contato.empresa],
-    ['Segmento', contato.segmento],
-    ['Contato', contato.contato],
-    ['O que precisa resolver', contato.objetivo],
-  ]
-    .map(([r, v]) => `<p style="margin:0 0 10px"><strong>${r}:</strong> ${v || '-'}</p>`)
-    .join('');
-
-  await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${chave}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from: process.env.CONTATO_REMETENTE || 'site@hubstation.com.br',
-      to: destino,
-      reply_to: contato.contato?.includes('@') ? contato.contato : undefined,
-      subject: `Novo contato pelo site: ${contato.nome || 'sem nome'}`,
-      html: `<h2 style="font-family:sans-serif">Novo contato pelo site</h2>${linhas}`,
-    }),
-  }).catch(() => {
-    /* o contato ja esta gravado; falha no e-mail nao derruba o envio */
-  });
 }
 
 export default async function handler(req) {
@@ -80,34 +46,60 @@ export default async function handler(req) {
     return resposta(400, { erro: 'corpo invalido' });
   }
 
-  // armadilha de robo: campo escondido preenchido = descarta em silencio
+  // Armadilha de robo: o campo fica escondido no formulario, so um script
+  // automatico preenche. Respondemos 200 para o robo achar que funcionou.
   if (limpar(dados['bot-field'], 50)) return resposta(200, { ok: true });
 
+  const canal = dados.canal === 'whatsapp' ? 'whatsapp' : 'site';
+  const contatoTexto = limpar(dados.contato, LIMITES.contato);
+
+  // O campo "contato" aceita e-mail ou WhatsApp. Separamos os dois para
+  // conseguir disparar por e-mail e por WhatsApp depois.
+  const email = contatoTexto.includes('@') ? contatoTexto.toLowerCase() : limpar(dados.email, LIMITES.contato).toLowerCase();
+  const telefoneBruto = pareceTelefone(contatoTexto) ? contatoTexto : limpar(dados.telefone, 40);
+  const telefone = paraE164(telefoneBruto);
+
   const contato = {
-    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    id: novoId(),
     ts: new Date().toISOString(),
+    canal,
     nome: limpar(dados.nome, LIMITES.nome),
     empresa: limpar(dados.empresa, LIMITES.empresa),
     segmento: limpar(dados.segmento, LIMITES.segmento),
     objetivo: limpar(dados.objetivo, LIMITES.objetivo),
-    contato: limpar(dados.contato, LIMITES.contato),
+    contato: contatoTexto,
+    email: email && email.includes('@') ? email : '',
+    telefone: telefone || '',
+    telefonePretty: telefone ? bonito(telefone) : '',
+    // Quem veio pelo botao do WhatsApp esta pedindo conversa por ali: e um
+    // opt-in explicito. Quem veio pelo formulario do site so entra no
+    // disparo de WhatsApp se tiver marcado a caixa.
+    waOptIn: canal === 'whatsapp' ? true : dados.waOptIn === true || dados.waOptIn === 'on',
+    waOptOut: false,
+    descadastrado: false,
     status: 'novo',
   };
 
-  if (!contato.nome || !contato.contato) {
+  if (!contato.nome || !contatoTexto) {
     return resposta(400, { erro: 'nome e contato sao obrigatorios' });
   }
 
   try {
-    const store = getStore('hubstation-contatos');
-    await store.setJSON(contato.id, contato);
+    await gravar(contato);
   } catch (err) {
+    console.error('[form-contact] falha ao gravar:', err.message);
     return resposta(500, { erro: 'nao foi possivel gravar o contato' });
   }
 
-  await avisarPorEmail(contato);
+  // O e-mail nunca segura a resposta: se a Resend estiver fora, o cadastro
+  // ja esta salvo e o painel mostra.
+  await avisarCadastro(contato);
 
-  return resposta(200, { ok: true });
+  const saida = { ok: true };
+  if (canal === 'whatsapp') {
+    saida.whatsappUrl = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(WHATSAPP_TEXTO)}`;
+  }
+  return resposta(200, saida);
 }
 
 export const config = { path: '/form-contact' };
