@@ -124,17 +124,15 @@ Isso gera a página de cada matéria em `blog/` e refaz o índice que a página
 
 ## Ainda falta preencher
 
-1. **As matérias do blog.** A estrutura está pronta e vazia — falta o texto
-   das matérias que já existem hoje no site no ar.
-2. **Número do WhatsApp.** Hoje está o provisório `5511999999999`. Dá para
-   trocar de uma vez pela variável `WHATSAPP_COMERCIAL` no Netlify, e nos
-   `.html` para os links do rodapé.
-3. **Instagram e LinkedIn.** Os links apontam para a página inicial das
-   redes, sem o perfil da HubStation.
-4. **Prints do portfólio.** Cinco imagens em `assets/img/portfolio/` — veja
+1. **Prints do portfólio.** Cinco imagens em `assets/img/portfolio/` — veja
    o `LEIA-ME.txt` de lá. Enquanto não subirem, aparece uma moldura tracejada
    dizendo o que falta; o site não quebra.
-5. **Domínio.** As tags de SEO estão escritas para `https://hubstation.com.br`.
+2. **As 67 matérias do calendário.** As 9 originais já estão escritas e no ar.
+   O calendário com as outras 67 pautas está em
+   `conteudo/blog/plano-editorial.py`, esperando aval dos títulos.
+
+O número de WhatsApp (`5511988815448`), os perfis de Instagram e LinkedIn
+(@hubstationbr) e o domínio já estão preenchidos.
 
 ---
 

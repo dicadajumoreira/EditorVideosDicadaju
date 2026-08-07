@@ -15,7 +15,7 @@ import { avisarCadastro } from '../lib/email.mjs';
 
 const LIMITES = { nome: 120, empresa: 160, segmento: 80, objetivo: 4000, contato: 200 };
 
-const WHATSAPP_NUMERO = process.env.WHATSAPP_COMERCIAL || '5511999999999';
+const WHATSAPP_NUMERO = process.env.WHATSAPP_COMERCIAL || '5511988815448';
 const WHATSAPP_TEXTO = 'Olá, quero falar com a HubStation';
 
 function limpar(valor, max) {
