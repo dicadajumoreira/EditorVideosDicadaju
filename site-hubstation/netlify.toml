@@ -33,6 +33,11 @@
   status = 200
 
 [[redirects]]
+  from = "/eventos"
+  to = "/eventos.html"
+  status = 200
+
+[[redirects]]
   from = "/agencia"
   to = "/agencia.html"
   status = 200

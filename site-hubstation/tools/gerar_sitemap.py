@@ -12,7 +12,7 @@ RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE = "https://hubstation.com.br"
 
 FIXAS = [("", "1.0"), ("servicos", "0.9"), ("metodo", "0.8"), ("mercado", "0.8"),
-         ("portfolio", "0.8"), ("blog", "0.8"), ("agencia", "0.7"), ("contato", "0.9")]
+         ("portfolio", "0.8"), ("blog", "0.8"), ("eventos", "0.8"), ("agencia", "0.7"), ("contato", "0.9")]
 
 linhas = ['  <url><loc>%s/%s</loc><priority>%s</priority></url>' % (BASE, c, p) for c, p in FIXAS]
 
